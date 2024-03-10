@@ -17,6 +17,7 @@ typedef struct node {
 //* Utility Functions
 void  initVHeap     (VHeap *main);
 void  display       (VHeap main, STACK top);
+void displayV2      (VHeap* main, STACK* top);
 int   allocSpace    (VHeap *main);
 int   deallocSpace  (VHeap *main, int index);
 bool  isEmpty       (VHeap main);
@@ -44,7 +45,8 @@ int main(){
 
   pop(&Beagle, &DogFood);
 
-  display(Beagle, DogFood);
+  // display(Beagle, DogFood);
+  displayV2(&Beagle, &DogFood);
 
   printf("top() = %d\n", top(Beagle, DogFood));
 }
@@ -68,6 +70,29 @@ void  display       (VHeap main, STACK top){
     }
   } else {
     printf("Nothing to display\n");
+  }
+}
+void displayV2      (VHeap* main, STACK* top){
+  if (*top != -1){
+    VHeap temp = {{0}, MAX-1};
+    int tempHead = -1;
+    while (*top != -1){
+      int newNode = temp.Avail;
+      if (newNode != -1){
+        temp.Nodes[newNode].data = main->Nodes[*top].data;
+        temp.Nodes[newNode].link = tempHead;
+        tempHead = newNode;
+      }
+
+      printf("[%d]\n", temp.Nodes[newNode].data);
+      
+      int delete = *top;
+      if (delete >= 0 && delete < MAX){
+        *top = main->Nodes[delete].link;
+        main->Nodes[delete].link = main->Avail;
+        main->Avail = delete;
+      }
+    }
   }
 }
 int   allocSpace    (VHeap *main){

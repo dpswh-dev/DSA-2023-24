@@ -14,6 +14,8 @@ typedef struct stack {
 //* Utility functions
 void initStack  (STACK *main);
 void display    (STACK main);
+void displayV2  (STACK* main);
+void displayV3  (STACK *main);
 bool isEmpty    (STACK main);
 // bool isFull     (STACK main);    Not applicable to Linked Lists
 
@@ -32,9 +34,8 @@ int main(){
 
   pop(&dishes);
 
+  displayV3(&dishes);
   display(dishes);
-  // display(dishes);
-  
 }
 
 // Utility functions
@@ -43,17 +44,59 @@ void initStack  (STACK *main){
   printf("initStack() successful\n");
 }
 void display    (STACK main){
-  STACK temp;
-  initStack(&temp);
+  if (main.top != NULL){
+    STACK temp;
+    initStack(&temp);
 
-  printf("display()\n");
-  while (!isEmpty(main)){
-    push(&temp, top(main));
-    printf("[%d]\n", top(temp));
+    printf("display()\n");
+    while (main.top != NULL){
+      push(&temp, top(main));
+      printf("[%d]\n", top(temp));
+      pop(&main);
+    }
+  } else {
+    printf("Cannot print an empty stack.\n");
   }
-  // while (!isEmpty(temp)){
-  //   push(&main, pop(&temp));
-  // }
+}
+// pass-by-address
+void displayV2  (STACK* main){
+  if (main->top != NULL){
+    STACK temp = {NULL};
+    // Loop to place in temp
+    while (main->top != NULL){
+      push(&temp, top(*main));
+      printf("[%d]\n", temp.top->data);
+      pop(main);
+    }
+    // Loop to place back to *main
+    while (temp.top != NULL){
+      push(main, top(temp));
+      pop(&temp);
+    }
+    printf("displayV2() successful\n");
+  } else {
+    printf("Cannot print an empty stack.\n");
+  }
+}
+void displayV3  (STACK *main){
+  if (main->top != NULL){
+    STACK temp = {NULL};
+    while (main->top != NULL){
+      NODE* new = (NODE*)malloc(sizeof(struct node));
+      if (new != NULL){
+        new->data = main->top->data;
+        new->link = temp.top;
+        temp.top = new;
+      }
+      printf("[%d]\n", temp.top->data);
+      if (main->top != NULL){
+        NODE* temp = main->top;
+        main->top = temp->link;
+        free(temp);
+      }
+    }
+    printf("displayV3() successful\n"); 
+  }
 }
 bool isEmpty    (STACK main){
   return main.top == NULL;
@@ -86,6 +129,6 @@ void push       (STACK *main, int newData){
     newNode->data = newData;
     newNode->link = main->top;
     main->top = newNode;
-    printf("push(%d) successful\n", newData);
+    // printf("push(%d) successful\n", newData);
   }
 }

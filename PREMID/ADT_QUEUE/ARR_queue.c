@@ -13,6 +13,8 @@ void  initQueue (QUEUE *main);
 bool  isEmpty   (QUEUE main);
 bool  isFull    (QUEUE main);
 void  display   (QUEUE main);
+void  displayV2 (QUEUE* main);
+
 
 //* Main Functions
 void  enqueue   (QUEUE *main, int newData);
@@ -34,6 +36,7 @@ int main(){
   dequeue(&Rewind);
 
   display(Rewind);
+  displayV2(&Rewind);
 }
 
 //* Utility Functions
@@ -63,6 +66,24 @@ void  display   (QUEUE main){
     printf("Empty queue.\n");
   }
 }
+void displayV2  (QUEUE* main){
+  if (!isEmpty(*main)){
+    QUEUE temp = {{0},-1,-1};
+    while (main->front != -1 && main->rear != -1){
+      enqueue(&temp, front(*main));
+      printf("%d => ", temp.elems[temp.rear]);
+      dequeue(main);
+    }
+    printf("NULL\n");
+    while (temp.front != -1 && temp.rear != -1){
+      enqueue(main, front(temp));
+      dequeue(&temp);
+    }
+    printf("displayV2() successful\n");
+  } else {
+    printf("Cannot display an empty queue.\n");
+  }
+}
 
 //* Main Functions
 void  enqueue   (QUEUE *main, int newData){
@@ -70,13 +91,11 @@ void  enqueue   (QUEUE *main, int newData){
     main->front++;
     main->rear = main->front;
     main->elems[main->front] = newData;
-  } else {
-    if (!isFull(*main)) {
+  } else if (!isFull(*main)) {
       main->rear++;
       main->elems[main->rear] = newData;
-    } else {
-      printf("Queue overflow\n");
-    }
+  } else {
+    printf("Queue overflow\n");
   } 
 }
 void  dequeue   (QUEUE *main){
